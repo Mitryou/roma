@@ -49,7 +49,9 @@
     </div>
 </header>
 
-<slot />
+<div class="content">
+    <slot />
+</div>
 
 <footer class="footer">
     <div class="container mx-auto">
