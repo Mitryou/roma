@@ -19,7 +19,7 @@
 
             <ul class="nav-list">
                 <li><a href="#" class="py-4">Свидетели геноцида</a></li>
-                <li><a href="#" class="py-4">Карта</a></li>
+                <li><a href="/map" class="py-4">Карта</a></li>
                 <li><a href="#" class="py-4">Материалы</a></li>
                 <li><a href="#" class="py-4">Новости</a></li>
             </ul>
@@ -33,7 +33,7 @@
                     </button>
                     <ul class="nav-list-mobile">
                         <li><a href="#" class="py-4">Свидетели геноцида</a></li>
-                        <li><a href="#" class="py-4">Карта</a></li>
+                        <li><a href="/map" class="py-4">Карта</a></li>
                         <li><a href="#" class="py-4">Материалы</a></li>
                         <li><a href="#" class="py-4">Новости</a></li>
                     </ul>
