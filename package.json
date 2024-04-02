@@ -1,1 +1,16 @@
-{}
+{
+    "name": "backend",
+    "private": true,
+    "version": "0.1.0",
+    "description": "A Strapi application",
+    "license": "MIT",
+    "dependencies": {
+      "nodemon": "^3.0.1"
+    },
+    "scripts": {
+      "frontend": "cd ./frontend && npm run dev",
+      "backend": "cd ./backend && npm run start",
+      "all": "concurrently \"npm run frontend\" \"npm run backend\""
+    }
+  }
+  
