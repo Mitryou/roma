@@ -4,7 +4,26 @@
     import {faBars} from "@fortawesome/free-solid-svg-icons/faBars";
     import {faXmark} from "@fortawesome/free-solid-svg-icons/faXmark";
 
-    let isMobileMenuOpen = true
+    const navList = [
+        {
+            name: 'Свидетели геноцида',
+            link: '#'
+        },
+        {
+            name: 'Карта',
+            link: '/map'
+        },
+        {
+            name: 'Материалы',
+            link: '#'
+        },
+        {
+            name: 'Новости',
+            link: '#'
+        }
+    ];
+
+    let isMobileMenuOpen = true;
     function setShowMobileMenu() {
         isMobileMenuOpen = !isMobileMenuOpen;
     }
@@ -18,10 +37,9 @@
             </a>
 
             <ul class="nav-list">
-                <li><a href="#" class="py-4">Свидетели геноцида</a></li>
-                <li><a href="/map" class="py-4">Карта</a></li>
-                <li><a href="#" class="py-4">Материалы</a></li>
-                <li><a href="#" class="py-4">Новости</a></li>
+                {#each navList as item}
+                    <li><a href={item.link} class="py-4">{item.name}</a></li>
+                {/each}
             </ul>
 
             <div class="fixed top-0 {isMobileMenuOpen ? '-right-full' : 'right-0'} bottom-0 z-30 w-full sm:w-[300px] h-screen transition-all duration-200">
@@ -32,10 +50,9 @@
                         <Fa icon={faXmark}/>
                     </button>
                     <ul class="nav-list-mobile">
-                        <li><a href="#" class="py-4">Свидетели геноцида</a></li>
-                        <li><a href="/map" class="py-4">Карта</a></li>
-                        <li><a href="#" class="py-4">Материалы</a></li>
-                        <li><a href="#" class="py-4">Новости</a></li>
+                        {#each navList as item}
+                            <li><a href={item.link} class="py-4" on:click={setShowMobileMenu}>{item.name}</a></li>
+                        {/each}
                     </ul>
                 </div>
             </div>
