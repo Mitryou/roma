@@ -1,533 +1,252 @@
-<script>
-    import { onMount } from 'svelte';
+<script lang="ts">
+    import {onMount, onDestroy} from 'svelte';
     import mapboxgl from 'mapbox-gl';
     import 'mapbox-gl/dist/mapbox-gl.css';
+    import './index.css'
+    import {locations, zonesFeatures} from '../constants';
+    import type {CustomFeature, Location} from '../../types';
+
+    const {Map, Marker} = mapboxgl;
+    const initialCenter: [number, number] = [27.535326389787375, 53.94031907686613]; // Minsk, Belarus
+
+    const filteredLocations = locations.filter(location => location.coordinates.length);
+    const combinedArray = [
+        ...filteredLocations.map((location: Location) => ({data: location, type: 'location'})),
+        ...zonesFeatures.map((feature: CustomFeature) => ({data: feature, type: 'feature'}))
+    ];
+    const places = combinedArray.map((place, idx) => ({...place, id: `${place.type}-${idx}`}));
+
+    const descriptionMaxLength = 200;
 
     let map;
-    $: isMobile = false;
 
-    const locations = [
-        {
-            title: 'Барановичи, городская площадь',
-            desc: '29 июня 1941 г. в Барановичах на городской площади (ныне стадион «Локоматив») расстреляны 90 ромов, пригнанных из района Ганцевичи – Мальковичи',
-            coordinates: [26.03197452729094, 53.13112440012875],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Миоры',
-            desc: 'В июле 1941 г. расстрелы рома и пленных красноармейцев были проведены жандармерией в местечке Миоры.',
-            coordinates: [27.633784740085844, 55.62248381732897],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Минский район',
-            desc: 'В сентябре 1941 г. в Минском районе расстреляны 23 рома «за многочисленные факты воровства».',
-            coordinates: [27.633784740085844, 55.62248381732897],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Минск',
-            desc: 'Евгений Алексеевич Хрол, независимый эксперт Международного общественного объединения «Фонд взаимопонимания и примирения»  документально подтвердил уничтожение 400 рома в концлагере в д. Дрозды.',
-            coordinates: [27.535326389787375, 53.94031907686613],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Лепель',
-            desc: 'Во второй половине сентября 1941 года полевая комендатура 181 (Лепель) передала айнзацкоманде 9 23 рома (13 мужчин и 10 женщин), которые якобы терроризировали сельское население и совершали кражи.',
-            coordinates: [28.705414316428072, 54.87957467371375],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Могилев',
-            desc: 'Сохранились сведения о двух расстрелах рома в Могилеве. 10 октября 1941 г. погибли 50, а в марте 1942 г. – 33 рома. В декабре 1941 г. во время карательной операции в окрестностях Могилева 127 ромов были расстреляны на месте.',
-            coordinates: [30.33264068388382, 53.89807694113073],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Лида',
-            desc: 'Осенью 1941 г. в Лиде погибли 86 ромов. часть из них умерли от голода во время недельного заключения, остальные были расстреляны по приказу начальника штаба гебитскомиссара Виндиша.',
-            coordinates: [25.30276899815469, 53.89028823138297],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'д. Черешля (Новогрудский район)',
-            desc: 'Как вспоминала жительница м. Любча Христина Шпаковская, «...осенью 1941 года был немецкий приказ о том, что все цыгане, проживающие на территории Любчанского района, должны явиться с лошадьми и упряжью. Всего съехалось мужчин и женщин человек 25. […] Из этих 25 человек были арестованы два цыгана, а остальные были освобождены. Со слов одного цыгана из этих двух мне известно, что их завели под деревню и заставили копать яму. А затем два полицейских […] убили одного цыгана, одного ранили в лицо. Он попросил углубить яму и, воспользовавшись этим, ударил лопатой одного полицейского, а сам убежал».',
-            coordinates: [25.901404382412732, 53.80173339594255],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Бобруйск',
-            desc: 'Борис Завицкий в детстве кочевал по Беларуси. Со слов знакомого рома Николая Малиновского он узнал о расстреле на берегу реки Бобруйка под Бобруйском. Оказалось, кочевые ромы укрывали советских офицеров. Военных переодели, но их форму не сожгли, потому что ткань была хорошего качества. Из-за этой одежды табор и погиб, причем расстреляны были все поголовно, вплоть до детей. Б. Завицкий видел братскую могилу на глинистом берегу и слышал подтверждение этой истории от местных жителей.',
-            coordinates: [],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Поставы',
-            desc: 'В Кашицком лесу, расположенном в 4–5 км от г. Поставы «было расстреляно немцами 60 ромов, собранных со всего района».',
-            coordinates: [26.839521450161524, 55.1136203829561],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Браслав',
-            desc: 'Свидетель из г. Браслав Иосиф Гейтан показал, что ему неоднократно приходилось видеть, как мимо его дома проводили под конвоем арестованных на расстрел. Он хорошо запомнил, как «в 1942 году однажды немцы вели цыган человек 18 в конец гор. Браслав и расстреляли, за что не знаю».',
-            coordinates: [27.031709501496888, 55.63947176058999],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Д. Мстибово, Волковысский район',
-            desc: 'В м. Мстибово Волковысского района в 1942 г. расстреляны 13 семейств ромов, которые там постоянно проживали.',
-            coordinates: [24.258875144668433, 53.113057312981915],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Д. Кашевичи (Петриковский район)',
-            desc: '6 января 1943 г. в д. Кашевичи Копаткевичского района Полесской области немцы «схватили 19 человек цыган и, без никакой причины заперши их в сарай, сожгли живьем. Фамилии сожженных не установлены».',
-            coordinates: [28.73414642352667, 52.48819481742534],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Полоцк',
-            desc: 'Свидетель М.Я. Устинович рассказала об уничтожении ромов, которые находились в тюрьме г. Полоцк: «Ежедневно в 6 часов утра на моих глазах брали людей и увозили на расстрел. В начале февраля 1943 года на моих глазах в один день увезли на расстрел цыган 2 автомашины 5-ти тонные, набивши битком обе машины в количестве 100 человек одних стариков, женщин и детей, среди них было много грудных детей».',
-            coordinates: [28.778154198519793, 55.484634405103634],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Горки',
-            desc: 'В акте о немецко-фашистских зверствах в Дрибине и Дрибинском районе Могилевской области содержатся показания о том, что «весной 1943 года полиция арестовала 45 цыган (среди них были старики, женщины и дети). Цыган увезли в селение Горки и там расстреляли».',
-            coordinates: [30.992676809438883, 54.285160099955476],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Борисов',
-            desc: 'Осенью 1943 г. в районе Борисова были расстреляны 100 рома.',
-            coordinates: [28.511913459491513, 54.224111392602325],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Железнодорожный район, Гомель',
-            desc: 'В поименном списке жертв оккупантов по Железнодорожному району г. Гомеля упоминаются 17 ромов, убитых в 1943 г. ',
-            coordinates: [],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Д. Полынковичи, Могилёвский район',
-            desc: 'По сведениям очевидцев, в 1943 г. у д. Полыковичи в 6 км от Могилева расстреляна «группа цыган до 80 человек». При этом «отдельные цыгане при оказании сопротивления и нежелании подойти к могиле были заживо погребены».',
-            coordinates: [30.37807234503232, 53.969998683005244],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Д. Липиничи, Буда-Кошелевский район',
-            desc: 'В д. Липиничи Буда-Кошелевского района в 1943 г. расстреляны «17 цыган, фамилии которых неизвестны».',
-            coordinates: [30.546885611633776, 52.815510702344085],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Д. Деревно, Воложинский район',
-            desc: 'Согласно поименному списку расстрелянных, повешенных и замученных в д. Деревно Ивенецкого района было убито 8 ромов. ',
-            coordinates: [27.59157009988927, 54.510193544929265],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Д. Мосар, Глубокский район',
-            desc: 'В Мосаре полиция, как сообщается, убивала ромов самостоятельно',
-            coordinates: [27.46467169792099, 55.22646482276531],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Аг. Жодишки, Сморгонский район',
-            desc: 'Житель м. Жодишки Сморгонского района (с 1942 г. входило в Генеральный округ «Литва») Людвиг Ракец в 1945 г. дал показания о том, что «во время нахождения немецкого гарнизона в Жодишках с июля 1941 г. по сентябрь 1943 г. под руководством коменданта гарнизона немца офицера Коркос Виталь была издевательски замучена и расстреляна группа цыган 25 человек, где было 9 человек детей, они лежали убитыми и не зарытыми несколько дней».',
-            coordinates: [26.445926704111287, 54.62316603129254],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Мстиславль',
-            desc: 'К сожалению, неизвестно, в каком году произошел расстрел 35 рома на западной окраине Мстиславля в овраге между Замковой и Троицкой горами. Первая экзекуция была проведена 15 октября 1941 г. Жертвами были евреи.',
-            coordinates: [31.729381116117885, 54.025926076814564],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Чечерск',
-            desc: 'Сохранились свидетельские показания о расстреле ромов вместе с евреями 28 декабря 1941 г. в Чечерске. Общее количество жертв – 432 человека.',
-            coordinates: [30.917062470544927, 52.91918135114057],
-            link: '/articles/fuck-the-strapicms'
-        },
-
-        {
-            title: 'Глубокое',
-            desc: 'Начиная с сентября 1941 года в урочище «Борок» Глубокского района оккупанты проводили систематические расстрелы ромского населения. По данным опроса ЧГК свидетеля А. Я. Смольского жандармы и полицейские систематически  проводили под конвоем к зданию жандармерии группы рома по 20—30 человек, после допроса которых обычно уводили в урочище Борок и там расстреливали, а их коней и имущество забирали себе. Количество убитых по данных ЧГК – около 1000.',
-            coordinates: [27.66264085439948, 55.16615611890675],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Рогачёв',
-            desc: 'В начале 1942 г. в Рогачеве «были замучены и расстреляны 300 советских граждан еврейской и цыганской национальности, собранные со всего района». По показаниям свидетельницы М.И. Даниловой: «расстрел был произведен 12 февраля 1942 года в количестве 300 человек. […] Было расстреляно 6 семей цыган. Расстреливались граждане всех возрастов, начиная от грудного ребенка до престарелых стариков. […] Расстрелял бывший начальник полиции Лобиков».',
-            coordinates: [30.051527868422475, 53.074767523915376],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Могилев',
-            desc: 'Cохранились сведения о двух расстрелах рома в Могилеве. 10 октября 1941 г. погибли 50, а в марте 1942 г. – 33 рома. В декабре 1941 г. во время карательной операции в окрестностях могилева и в самом городе были задержаны 1356 человек. Среди них – «кочевники, которые не имели документов». Количество последних составило 135 человек. Из них 127 ромов были расстреляны на месте.',
-            coordinates: [30.33275487362788, 53.897806489860415],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Вилейка',
-            desc: 'Х. Герлах  приводит сведения о уничтожения ромского и еврейского населения Вилейки в марте 1942 году с использованием той же братской могилы. ',
-            coordinates: [26.91731622744328, 54.49561518329849],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Марьина Горка',
-            desc: 'В Марьиной Горке в декабре 1941 г. несколько недель в невыносимых условиях находились интернированные рома и синти. в результате часть их погибла (в основном женщины и дети), а оставшиеся были расстреляны весной 1942 г.',
-            coordinates: [28.144589127168615, 53.50977619250648],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Городище ',
-            desc: 'В Городище цыгане ранее содержались в одном гетто с евреями; там расстреляли взрослых рома, убили детей». ',
-            coordinates: [27.833773330444657, 53.98244160337791],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Узда ',
-            desc: 'В акте Узденской районной комиссии об уничтожении населения немецкими оккупантами в районе содержатся сведения о том, что «в мае месяце 1942 г., дата точно не установлена, был произведен массовый расстрел цыган, общее количество расстрелянных не установлено, но только по двум бывшим волостям: Семеновичской и Стальбощинской было арестованот и расстреляно 538 цыган, в том числе детей, женщин и престарелых. Расстрел цыган производился севернее м. Узда в ста метрах, на бывшем еврейском кладбище. Арест цыган производился Узденской районной полицией и жандармерией». По сведениям В. Калинин в Узде существовал концентрационный лагерь для рома на 260 человек.',
-            coordinates: [27.202586600917485, 53.4657307592431],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Витебск',
-            desc: 'В апреле 1942 г. спецкоманда № 9 расстреляла группу из 20 рома под Витебском.',
-            coordinates: [30.206899578578202, 55.192441278320224],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Мозырь',
-            desc: 'В. Калинин приводит сведения об участии украинских карателей в уничтожении ромов на белорусских землях, входящих в Генеральный комиссариат «Украина». Так, в мае – июне 1942 г. ими были убиты под Мозырем несколько групп ромов. В декабре этого же года в лесах под Хойниками каратели выследили 12 семей. Людей привезли в город, заставили танцевать и играть на музыкальных инструментах. После этого на глазах у мирных жителей расстреляли.',
-            coordinates: [29.218644967865686, 52.03685013764171],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Новогрудок',
-            desc: 'В июне 1942 г. были собраны все рома по Новогрудскому округу и 7 числа были расстреляны за военными казармами по слонимскому шоссе в г. Новогрудке. «расстреливались целыми семьями не зависимо от пола и возраста.',
-            coordinates: [25.82509607468029, 53.59890648164884],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Клецк, урочище Старина',
-            desc: 'На процессе над начальником Барановицкого СД Максом Эстапаром немецкие свидетели сообщили, что при ликвидации гетто в Клецке были убиты евреи, работавшие на лесопилке, в результате чего предприятие осталось без рабочих. Тогда было решено привлечь к этому делу ромов. Они проработали всего три дня, после чего 60 человек были расстреляны. Могилой ромов была большая траншея, вырытая на окраине урочища Старина летом 1942 г.',
-            coordinates: [26.60219182026606, 53.052334176630865],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Любча',
-            desc: 'Разные сведения о количестве жертв и в местечке Любча. Если Х. Герлах называет цифру 40 и относит акцию к лету 1942 г., то согласно воспоминаниям жительницы местечка Любча Кристины Шпаковской, «...весной 1942 года стал массовый арест цыган. В том числе попал и мой муж. Арестовывали полицаи […]. Всего было цыган вместе с детьми больше 50 человек. […] На другой день ареста пришла полиция […], стали избивать мужчин, посадили в автомашину, взяли 2 детей и увезли за кладбище у м. Любча и всех расстреляли. Затем машина вернулась, взяли женщин с детьми и увезли на тоже кладбище и расстреляли».',
-            coordinates: [26.056768974839308, 53.75146945838296],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Аг. Снов, Несвижский район',
-            desc: '28 августа 1942 г. начальник жандармерии Несвижа в рапорте на имя окружного начальника жандармерии в Барановичах рассказывал об уничтожении «банды цыган» из восьми человек. Ее разоблачил полицейский патруль из м. Снов около д. Петуховщина. В «банду» входили мужчина, две женщины и пятеро детей в возрасте от двух месяцев до 12 лет. Со слов самих ромов, они были родом из Друи, а направлялись в Варшаву. Всех их привезли в Снов, где вечером расстреляли.',
-            coordinates: [26.400334837379066, 53.2219496596625],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Ляховичи',
-            desc: 'В августе 1942 г. была расстреляна семья ромов из шести человек под Ляховичами.',
-            coordinates: [26.264672812872856, 53.03886411420666],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Ветка',
-            desc: 'В сентябре 1942 г. по указанию Гомельского гестапо Ветковская комендатура и полиция собрали по всему району рома и оставшиеся семьи евреев, в количестве 61 человека. Все они были расстреляны в одном километре севернее города.',
-            coordinates: [31.17286830789813, 52.565847707980744],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Г. п. Тереховка, Добрушский район',
-            desc: 'В сентябре 1942 г.  в м. Тереховка были арестованы «60 человек ни в чем не повинных советских граждан цыганской и еврейской национальности только за то, что они цыгане и евреи. В числе арестованных было мужчин от 14 до 65 лет – 20, женщин от 16 до 50 лет – 16, детей в возрасте от 2 до 14 – 24». Через несколько дней всех арестованных отвели к заранее приготовленной яме, где и расстреляли.',
-            coordinates: [31.423269682104785, 52.21688495696869],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Д. Заостровечье, Клецкий район',
-            desc: 'Согласно показаниям свидетелей, осенью 1942 г. под руководством карателя Ивана Наумчика полицейские расстреляли не менее 50 человек.',
-            coordinates: [26.77882185745945, 52.89818549650939],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Михновский лес, д. Колдычево, Барановичский район',
-            desc: 'В ноябре 1942 г. в Михновском лесу возле п. Колдычево был расстрелян табор, в котором находилось около 200 человек. В концлагере «Колдычево» уничтожали ромов со всего района. ',
-            coordinates: [26.065161443134183, 53.28162445671489],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Д. Новосяды, Ошмянский район',
-            desc: 'В ноябре 1942 г. около д. Новосяды Ошмянского района (Генеральный округ «Литва») по приказанию немецких властей расстреляны 44 человека, в числе которых 42 рома.',
-            coordinates: [25.87209965659733, 54.40107259485821],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title: 'Г. п. Городище, Барановичский район',
-            desc: 'В ноябре 1942 года около православного кладбища в м. Городище расстреляно от 40 до 100 ромов. ',
-            coordinates: [30.638089478331764, 54.183101218723074],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title:
-                'Зона проведения антипартизанской операции «Бреслау» 1-15.09.1942, Могилёвский, Быховский, Рогачёвский районы, (вдоль шоссе и железной дороги Могилев — Рогачев)',
-            desc: 'В отчете шефа оперативной группы «B» за период с 1 по 15 сентября 1942 г. об уничтожении «банд» на территории тылового района группы армий «центр» содержатся сведения об истреблении 292 ромов наравне с бандитами, коммунистами, душевнобольными и уголовниками.',
-            coordinates: [],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title:
-                'Зона проведения антипартизанской операции «Гамбург», в треугольнике Лида — Барановичи — Волковыск (междуречье рек Немана и Щары), декабрь 1942',
-            desc: 'В оперативном приказе фюрера СС и полиции Генерального комиссариата «Беларусь» Курта фон Готтберга от 7.12.1942 г. относительно операции «Гамбург» читаем: «задача вверенных мне соединений состоит в том, чтобы напасть на бандитов и уничтожить их. Врагом считать каждого бандита, еврея, цыгана и всех подозреваемых в связи с бандами. если будут взяты пленные, то сначала доставить их для допроса в СД». В ходе операции задержаны 30 ромов с большим количеством припасов в районе Слонима.',
-            coordinates: [],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title:
-                'Зона проведения антипартизанской операции «Альтона», Ивацевичский район, II пол. 12.1942',
-            desc: 'В районе Косово-Бытень была проведена операция «Альтона». Как доносил начальник полиции безопасности и СД «было расстреляно 785 подозрительных лиц, 126 евреев и 24 цыгана».',
-            coordinates: [],
-            link: '/articles/fuck-the-strapicms'
-        },
-        {
-            title:
-                'Зона проведения антипартизанской операции «Праздник урожая-1», 25-28.01.1943, Слуцкий район',
-            desc: 'В оперативном приказе боевой группы Гриппа о задачах операции «Праздник урожая 1» отмечалось: «Бандитов нужно атаковать и уничтожить. За врага следует принимать бандита, еврея, цыгана и каждого заподозренного в бандитизме».',
-            coordinates: [],
-            link: '/articles/fuck-the-strapicms'
-        }
-    ];
-    const points = locations.filter(location => location.coordinates.length);
+    $: selectedPlace = null;
+    $: isFullDescriptionView = false;
 
     onMount(() => {
-        mapboxgl.accessToken =
-            'pk.eyJ1Ijoic3RyYXBpLXVzZXIiLCJhIjoiY2xwZTV2YmRrMTk4ejJocmxrN3pqbGEzdCJ9.MQGuqEAPP3qrwfix8Cb--Q';
-
-        map = new mapboxgl.Map({
+        map = new Map({
             container: 'map',
+            accessToken: 'pk.eyJ1Ijoic3RyYXBpLXVzZXIiLCJhIjoiY2xwZTV2YmRrMTk4ejJocmxrN3pqbGEzdCJ9.MQGuqEAPP3qrwfix8Cb--Q',
             style: 'mapbox://styles/mapbox/dark-v11',
-            center: selectedLocation.coordinates,
+            center: initialCenter,
             zoom: 7,
-            attribution: ``,
-            // maxNativeZoom: 21,
             maxZoom: 20
-            // subdomains: ['a', 'b', 'c', 'd', 'e']
         });
 
-        map.on('load', () => {
-            map.loadImage('', (error, image) => {
-                // if (error) throw error;
-
-                // map.addImage('custom-marker', image);
-
-                points.forEach((point) => {
-                    const customIcon = document.createElement('div');
-                    customIcon.className = 'custom-marker';
-
-                    const width = 31;
-                    const height = 31;
-                    customIcon.className = 'marker';
-                    customIcon.style.backgroundImage = `url(./map/marker.svg)`;
-                    customIcon.style.backgroundSize = 'cover';
-                    customIcon.style.backgroundRepeat = 'no-repeat';
-                    customIcon.style.width = `${width}px`;
-                    customIcon.style.height = `${height}px`;
-                    customIcon.style.backgroundSize = '100%';
-                    customIcon.style.cursor = 'pointer';
-
-
-                    customIcon.addEventListener('click', () => {
-                        handleMarkerClick(point);
-                    });
-
-                    new mapboxgl.Marker(customIcon)
-                        .setLngLat(point.coordinates)
-                        .addTo(map);
-                });
-            });
-        });
+        map.on('load', draw);
     });
 
-    function handleMarkerClick(point) {
-        selectedLocation = point;
-        shortDesc = `${selectedLocation.desc.slice(0, 130)}...`;
+    onDestroy(() => map?.remove());
 
-        selectedLocation.title.length < 20
-            ? (textTitle = 'text-xl')
-            : selectedLocation.title.length > 20 && selectedLocation.title.length < 50
-                ? (textTitle = 'text-base')
-                : (textTitle = 'text-sm');
+    function draw(): void {
+        places.forEach((place) => {
+            if (place.type === 'location') {
+                drawMarker(place);
+            }
 
-        map.flyTo({
-            center: point.coordinates,
-            zoom: 12,
-            essential: true
-        });
+            if (place.type === 'feature') {
+                drawZone(place);
+            }
+        })
     }
 
-    $: iconSize = [40, 40];
-    let radius = 1000;
+    function drawMarker(place): void {
+        const location = place.data as Location;
 
-    // pointer
-    $: textTitle = 'text-xl';
+        const customIcon = document.createElement('div');
+        customIcon.id = `marker-${place.id}`
+        customIcon.className = 'marker';
 
-    $: selectedLocation = {
-        title: '',
-        desc: `Уничтожение ромского население проводилось по всей территории Беларуси, как под гражданским, так и под военным управлением. Наличие мест уничтожения во всех областях современной Беларуси указывает на массовый характер геноцида рома в Беларуси во время немецкой оккупации с 1941 по 1944 годы. Карта мест уничтожения составлена на основании немецких документов, а также актов ЧГК, которые содержат факты уничтожения ромского населения. Архивные документы не всегда дают точное количество жертв, поэтому данные о количестве жертв могут быть приблизительными либо и вовсе отсутствовать.`,
-        coordinates: ['27.561879', '53.902334'],
-        link: '/articles/fuck-the-strapicms',
-        iconUrl: './map/1.png'
-    };
+        customIcon.addEventListener('click', () => onPlaceSelect(place));
 
-    let showLocationIndex = -1;
-    let showFull = false;
+        new Marker(customIcon)
+            .setLngLat(location.coordinates)
+            .addTo(map);
+    }
 
-    $: shortDesc = 'Tap on any point on the map.';
+    function drawZone(place): void {
+        const feature = place.data as CustomFeature;
+
+        map.addLayer({
+            id: place.id,
+            type: 'fill',
+            source: {
+                type: 'geojson',
+                data: feature
+            },
+            paint: {
+                'fill-color': '#f00',
+                'fill-opacity': 0.5
+            }
+        });
+
+        map.on('mouseenter', place.id, () => map.getCanvas().style.cursor = 'pointer');
+        map.on('mouseleave', place.id, () => map.getCanvas().style.cursor = '');
+
+        map.on('click', place.id, () => onPlaceSelect(place));
+    }
+
+    function onPlaceSelect(place): void {
+        selectedPlace = place;
+
+        highlightBtn(place);
+        if (place.type === 'location') {
+            document.querySelector('.marker.marker--active')?.classList.remove('marker--active');
+            document.getElementById(`marker-${place.id}`).classList.add('marker--active');
+            map.flyTo({
+                center: place.data.coordinates,
+                zoom: 12,
+                essential: true
+            });
+            selectedPlace.shortDescription = cutDescription(place.data.description);
+        }
+
+        if (place.type === 'feature') {
+            featureFitBounds(place.data.geometry.coordinates);
+            selectedPlace.shortDescription = cutDescription(place.data.properties.description);
+        }
+    }
+
+    function highlightBtn(place): void {
+        document.querySelector('.btn.btn--active')?.classList.remove('btn--active');
+        const btnEl = document.getElementById(place.id);
+        btnEl?.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
+        btnEl?.classList.add('btn--active');
+    }
+
+    function featureFitBounds(coordinates): void {
+        const bounds = new mapboxgl.LngLatBounds(
+            coordinates[0],
+            coordinates[0]
+        );
+
+        for (const coord of coordinates) {
+            bounds.extend(coord);
+        }
+
+        map.fitBounds(bounds, {padding: 100});
+    }
+
+    function cutDescription(description: string): string {
+        if (description.length > descriptionMaxLength) {
+            return description.slice(0, descriptionMaxLength) + '...';
+        }
+        return '';
+    }
+
+    function setIsFullDescriptionView(): void {
+        isFullDescriptionView = !isFullDescriptionView;
+    }
 </script>
 
-
-<section class="flex min-h-screen  flex-col md:flex-col lg:flex-row">
-    <div
-            id="map"
-            class="{isMobile === 'sm' && showFull
-			? 'hidden'
-			: ''} z-2 h-full w-full md:h-screen  lg:h-screen lg:w-full"
+<section class="h-[calc(100vh_-_7rem)] relative flex flex-col">
+    <div id="map"
+         class="z-2 h-full w-full"
     >
     </div>
-
-    <div class="flex h-auto w-full flex-col bg-neutral-200 lg:h-screen lg:w-[510px] ">
-        <!-- <div class="flex lg:h-40 md:h-40 h-20 w-full items-center justify-center bg-black bg-neutral-900 py-6 lg:px-4 md:px-4 px-2">
-            <h3 class="font-oswald-normal text-md uppercase md:text-xl lg:text-xl ">
-                Места уничтожения рома
-            </h3>
-        </div> -->
-        {#if !showFull}
-            <div
-                    class=" h-full w-full bg-neutral-100 px-8 pt-10 text-neutral-900 shadow-2xl md:px-4  lg:px-4  "
-            >
-                <h3
-                        class="font-oswald-normal {selectedLocation.title.length
-						? 'hidden'
-						: ''} mb-4 {textTitle}  text-neutral-900"
-                >
-                    {selectedLocation.title}
-                </h3>
-                <p class="font-notoSans-normal limited-text mb-2 h-auto text-dimInHuj text-neutral-900">
-                    {selectedLocation.desc}
-                </p>
-
-                <div class="flex flex-row flex-wrap {selectedLocation.title.length ? 'mb-8' : 'pb-2'}  ">
-                    {#if selectedLocation.title.length}
-                        <button
-                                class="mb-6 flex h-12 w-full flex-row items-center justify-center rounded-md border-2 border-neutral-900 py-2 px-4 text-center text-sm text-neutral-900 "
-                                on:click={() => {
-								showFull = !showFull;
-							}}
-                        >
-                            <img src="./map/down_arow.svg" class="mr-2 h-4 w-4" alt="" />
-
-                            Развернуть</button
-                        >
+    <div class="w-full md:w-[368px] bg-white text-black md:absolute md:right-0 md:top-0 md:bottom-0 md:z-20">
+        <div class="flex flex-col justify-between items-stretch h-full">
+            <div class="w-full h-full pt-16 px-6 pb-9 shadow-lg z-10">
+                {#if selectedPlace}
+                    {#if isFullDescriptionView}
+                        <button type="button"
+                                class="hidden md:block absolute top-4 right-6"
+                                on:click={setIsFullDescriptionView}
+                                aria-label="Close">
+                            <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g filter="url(#filter0_d_1054_73)">
+                                    <rect x="5" y="5" width="32" height="32" rx="16" fill="#CCCCCC"/>
+                                    <rect x="4.5" y="4.5" width="33" height="33" rx="16.5" stroke="#CCCCCC"/>
+                                    <path d="M17.1678 17.1678C17.2209 17.1146 17.284 17.0724 17.3534 17.0436C17.4228 17.0148 17.4972 17 17.5723 17C17.6475 17 17.7219 17.0148 17.7913 17.0436C17.8607 17.0724 17.9237 17.1146 17.9768 17.1678L21.0002 20.1923L24.0235 17.1678C24.0766 17.1147 24.1397 17.0726 24.2091 17.0438C24.2785 17.0151 24.3529 17.0003 24.428 17.0003C24.5031 17.0003 24.5775 17.0151 24.6469 17.0438C24.7163 17.0726 24.7793 17.1147 24.8325 17.1678C24.8856 17.221 24.9277 17.284 24.9565 17.3534C24.9852 17.4228 25 17.4972 25 17.5723C25 17.6474 24.9852 17.7218 24.9565 17.7912C24.9277 17.8606 24.8856 17.9237 24.8325 17.9768L21.808 21.0002L24.8325 24.0235C24.8856 24.0766 24.9277 24.1397 24.9565 24.2091C24.9852 24.2785 25 24.3529 25 24.428C25 24.5031 24.9852 24.5775 24.9565 24.6469C24.9277 24.7163 24.8856 24.7793 24.8325 24.8325C24.7793 24.8856 24.7163 24.9277 24.6469 24.9565C24.5775 24.9852 24.5031 25 24.428 25C24.3529 25 24.2785 24.9852 24.2091 24.9565C24.1397 24.9277 24.0766 24.8856 24.0235 24.8325L21.0002 21.808L17.9768 24.8325C17.9237 24.8856 17.8606 24.9277 17.7912 24.9565C17.7218 24.9852 17.6474 25 17.5723 25C17.4972 25 17.4228 24.9852 17.3534 24.9565C17.284 24.9277 17.221 24.8856 17.1678 24.8325C17.1147 24.7793 17.0726 24.7163 17.0438 24.6469C17.0151 24.5775 17.0003 24.5031 17.0003 24.428C17.0003 24.3529 17.0151 24.2785 17.0438 24.2091C17.0726 24.1397 17.1147 24.0766 17.1678 24.0235L20.1923 21.0002L17.1678 17.9768C17.1146 17.9237 17.0724 17.8607 17.0436 17.7913C17.0148 17.7219 17 17.6475 17 17.5723C17 17.4972 17.0148 17.4228 17.0436 17.3534C17.0724 17.284 17.1146 17.2209 17.1678 17.1678Z" fill="white"/>
+                                </g>
+                                <defs>
+                                    <filter id="filter0_d_1054_73" x="0" y="0" width="42" height="42" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                                        <feOffset/>
+                                        <feGaussianBlur stdDeviation="2"/>
+                                        <feComposite in2="hardAlpha" operator="out"/>
+                                        <feColorMatrix type="matrix" values="0 0 0 0 0.8 0 0 0 0 0.8 0 0 0 0 0.8 0 0 0 0.5 0"/>
+                                        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1054_73"/>
+                                        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1054_73" result="shape"/>
+                                    </filter>
+                                </defs>
+                            </svg>
+                        </button>
                     {/if}
-                </div>
+                    {#if selectedPlace.type === 'location'}
+                        <h3 class="mb-4">{selectedPlace.data.title}</h3>
+                        {#if selectedPlace.shortDescription.length && !isFullDescriptionView}
+                            <p class="text-base mb-4">{selectedPlace.shortDescription}</p>
+                            <button type="button"
+                                    class="w-full h-10 flex justify-center items-center gap-1 rounded border border-iron"
+                                    on:click={setIsFullDescriptionView}
+                            >
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                          d="M5.99997 0C6.19888 0 6.38965 0.0790178 6.5303 0.21967C6.67095 0.360322 6.74997 0.551088 6.74997 0.75V9.4395L9.96897 6.219C10.0387 6.14927 10.1215 6.09395 10.2126 6.05621C10.3037 6.01848 10.4014 5.99905 10.5 5.99905C10.5986 5.99905 10.6962 6.01848 10.7873 6.05621C10.8785 6.09395 10.9612 6.14927 11.031 6.219C11.1007 6.28873 11.156 6.37152 11.1938 6.46262C11.2315 6.55373 11.2509 6.65138 11.2509 6.75C11.2509 6.84862 11.2315 6.94627 11.1938 7.03738C11.156 7.12848 11.1007 7.21127 11.031 7.281L6.53097 11.781C6.4613 11.8508 6.37854 11.9063 6.28742 11.9441C6.1963 11.9819 6.09862 12.0013 5.99997 12.0013C5.90132 12.0013 5.80364 11.9819 5.71252 11.9441C5.6214 11.9063 5.53864 11.8508 5.46897 11.781L0.968971 7.281C0.899239 7.21127 0.843925 7.12848 0.806186 7.03738C0.768447 6.94627 0.749023 6.84862 0.749023 6.75C0.749023 6.65138 0.768447 6.55373 0.806186 6.46262C0.843925 6.37152 0.899239 6.28873 0.968971 6.219C1.1098 6.07817 1.30081 5.99905 1.49997 5.99905C1.59859 5.99905 1.69624 6.01848 1.78735 6.05621C1.87846 6.09395 1.96124 6.14927 2.03097 6.219L5.24997 9.4395V0.75C5.24997 0.551088 5.32899 0.360322 5.46964 0.21967C5.61029 0.0790178 5.80106 0 5.99997 0Z"
+                                          fill="black"/>
+                                </svg>
+                                <span>Развернуть</span>
+                            </button>
+                        {:else}
+                            <p class="text-base">{selectedPlace.data.description}</p>
+                        {/if}
+                    {:else if selectedPlace.type === 'feature'}
+                        <h3 class="mb-4">{selectedPlace.data.properties.title}</h3>
+                        {#if selectedPlace.shortDescription.length && !isFullDescriptionView}
+                            <p class="text-base mb-4">{selectedPlace.shortDescription}</p>
+                            <button type="button"
+                                    class="w-full h-10 flex justify-center items-center gap-1 rounded border border-iron"
+                                    on:click={setIsFullDescriptionView}
+                            >
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                          d="M5.99997 0C6.19888 0 6.38965 0.0790178 6.5303 0.21967C6.67095 0.360322 6.74997 0.551088 6.74997 0.75V9.4395L9.96897 6.219C10.0387 6.14927 10.1215 6.09395 10.2126 6.05621C10.3037 6.01848 10.4014 5.99905 10.5 5.99905C10.5986 5.99905 10.6962 6.01848 10.7873 6.05621C10.8785 6.09395 10.9612 6.14927 11.031 6.219C11.1007 6.28873 11.156 6.37152 11.1938 6.46262C11.2315 6.55373 11.2509 6.65138 11.2509 6.75C11.2509 6.84862 11.2315 6.94627 11.1938 7.03738C11.156 7.12848 11.1007 7.21127 11.031 7.281L6.53097 11.781C6.4613 11.8508 6.37854 11.9063 6.28742 11.9441C6.1963 11.9819 6.09862 12.0013 5.99997 12.0013C5.90132 12.0013 5.80364 11.9819 5.71252 11.9441C5.6214 11.9063 5.53864 11.8508 5.46897 11.781L0.968971 7.281C0.899239 7.21127 0.843925 7.12848 0.806186 7.03738C0.768447 6.94627 0.749023 6.84862 0.749023 6.75C0.749023 6.65138 0.768447 6.55373 0.806186 6.46262C0.843925 6.37152 0.899239 6.28873 0.968971 6.219C1.1098 6.07817 1.30081 5.99905 1.49997 5.99905C1.59859 5.99905 1.69624 6.01848 1.78735 6.05621C1.87846 6.09395 1.96124 6.14927 2.03097 6.219L5.24997 9.4395V0.75C5.24997 0.551088 5.32899 0.360322 5.46964 0.21967C5.61029 0.0790178 5.80106 0 5.99997 0Z"
+                                          fill="black"/>
+                                </svg>
+                                <span>Развернуть</span>
+                            </button>
+                        {:else}
+                            <p class="text-base">{selectedPlace.data.properties.description}</p>
+                        {/if}
+                    {/if}
+                {:else}
+                    <p class="text-sm">
+                        Уничтожение ромского население проводилось по всей территории Беларуси, как под гражданским, так
+                        и под военным управлением. Наличие мест уничтожение во всех областях современной Беларуси
+                        указывает на массовый характер геноцида рома в Беларуси во время немецкой оккупации с 1941 по
+                        1944 годы. Карта мест уничтожения составлена на основании немецких документов, а также актов
+                        ЧГК, которые содержат факты уничтожения ромского населения. Архивные документы не всегда дают
+                        точное количество жертв, поэтому данные о количестве жертв могут быть приблизительными либо и
+                        вовсе отсутствовать.
+                    </p>
+                {/if}
             </div>
-            <div
-                    class="list flex  max-w-sm flex-col items-center overflow-y-scroll bg-neutral-300 px-6 py-4 px-4 py-2 md:max-h-[600px] lg:max-h-[600px]"
-            >
-                {#each points as location, i}
+            <div id="list" class="sidebar-nav" class:sidebar-nav--hidden={isFullDescriptionView}>
+                {#each places as place}
                     <button type="button"
-                            on:click={() => {
-							handleMarkerClick(location);
-							showLocationIndex = i;
-						}}
-                            class="  mx-auto mb-1 flex w-full flex-row  items-center     {showLocationIndex === i
-							? 'rounded-md  border-b-2 border-gray-700 bg-rose-700'
-							: 'delay-550 duration-600 hover:scale-140 border-b-2 border-solid border-gray-700  bg-neutral-300 transition ease-in-out hover:-translate-y-1 hover:rounded-md  hover:bg-white   hover:shadow-lg'}  py-5 px-4  "
+                            id={place.id}
+                            on:click={() => onPlaceSelect(place)}
+                            class="btn"
+                            class:btn--active={place.id === selectedPlace?.id}
                     >
-                        <img
-                                src="./map/fire.svg"
-                                class="mr-2"
-                                style="width: 18px; height: 18px;"
-                                alt=""
-                        />
-                        <h3 class="font-notoSans-normal max-w-sm text-sm text-neutral-900">{location.title}</h3>
+                        <svg class="mr-2 shrink-0" width="12" height="16" viewBox="0 0 12 16"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.8169 11.6787C11.3334 13.6176 10.1768 14.9889 8.17635 15.8949C8.95857 14.7684 9.69206 13.7855 9.16502 12.5104C8.8983 11.8658 8.4046 11.4057 7.64034 11.1237C7.68907 11.4941 7.78909 11.7837 7.74677 12.0529C7.69676 12.3835 7.60315 12.8846 7.39028 12.9717C7.18383 13.055 6.8235 13.0076 6.57601 12.8833C6.57601 12.8833 6.56575 12.8782 6.54651 12.8679C6.36827 12.7718 5.41935 12.2233 5.0821 11.3134C4.64483 10.1293 4.79486 8.53248 4.79486 8.53248C4.79486 8.53248 2.99063 11.0071 3.47022 13.4997C3.77028 15.0606 4.47428 15.8783 4.56019 15.9744C4.56276 15.9782 4.56532 15.9795 4.56532 15.9808L4.56917 15.9846C4.51916 16.0384 4.61918 15.9308 4.56917 15.9846C3.60614 15.8091 3.29197 15.6911 2.78674 15.3695C-0.00360337 13.5971 -0.838397 10.1882 0.9248 7.39319C1.66855 6.2129 2.67517 5.19792 3.55741 4.10477C4.05239 3.49091 4.57045 2.89243 5.02055 2.24782C5.48603 1.58142 5.70659 0.833 5.4373 0C7.25179 0.586944 8.94703 2.82195 8.38922 4.90188C8.25714 5.39271 8.18789 5.90148 8.12377 6.40769C8.05966 6.8998 8.23662 7.39319 8.72006 7.47137C9.06885 7.52775 9.50997 7.29708 9.83953 7.08562C10.0678 6.94081 10.1755 6.60889 10.3691 6.31286C11.7579 7.88018 12.3247 9.63332 11.8169 11.6787Z"/>
+                        </svg>
+                        <span>
+                            {#if place.type === 'location'}
+                                {place.data.title}
+                            {:else if place.type === 'feature'}
+                                {place.data.properties.title}
+                            {/if}
+                        </span>
                     </button>
                 {/each}
             </div>
-        {:else}
-            <div class=" h-screen w-full bg-neutral-100  px-8 pt-8  text-neutral-900 shadow-2xl">
-                <div class="mb-2 flex justify-end">
-                    <button
-                            on:click={() => {
-							showFull = !showFull;
-						}}
-                            class="btn-outline btn-circle btn"
-                    >
-                        <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-6 w-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                        ><path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"
-                        /></svg
-                        >
-                    </button>
-                </div>
-                <h3 class="font-oswald-normal  mb-4 {textTitle} text-neutral-900">
-                    {selectedLocation.title}
-                </h3>
-                <p
-                        class="font-notoSans-normal mb-2  h-full h-auto overflow-y-auto text-dimInHuj text-neutral-900"
-                >
-                    {selectedLocation.desc}
-                </p>
-            </div>
-        {/if}
+        </div>
     </div>
 </section>
-
-<style>
-    .custom-marker {
-        background-image: url('./map/pointer.svg');
-        background-size: cover;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        cursor: pointer;
-    }
-
-    #map {
-        height: 100vh;
-        width: 100%;
-    }
-
-    @media screen and (max-width: 450px) {
-        #map {
-            max-height: 656px;
-            overflow: hidden;
-            width: 100%;
-        }
-    }
-
-    @media screen and (max-width: 1000px) {
-        .list {
-            display: none;
-        }
-    }
-
-    .limited-text {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        -webkit-line-clamp: 5;
-    }
-</style>

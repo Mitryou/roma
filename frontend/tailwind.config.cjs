@@ -15,7 +15,9 @@ const config = {
 				'dark-charcoal': '#323232',
 				'peat': '#706856',
 				'iron': '#cccccc',
-				'reddish': '#C73B3B'
+				'reddish': '#C73B3B',
+				'greylight': '#F7F6F3',
+				'firebrick': '#B62025'
 			}
 		},
 		fontFamily: {
