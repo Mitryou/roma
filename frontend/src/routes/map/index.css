@@ -1,3 +1,53 @@
+#map {
+    @apply h-full w-full md:w-[calc(100%-368px)]
+}
+
+.sidebar {
+    @apply w-full md:w-[368px] bg-white text-black md:absolute md:right-0 md:top-0 md:bottom-0 md:z-20
+}
+
+.sidebar-container {
+    @apply flex flex-col justify-stretch items-stretch h-full
+}
+
+.sidebar-main-content {
+    @apply w-full pt-16 px-6 pb-9 shadow-lg z-10
+}
+.sidebar-main-content.sidebar-main-content--full {
+    @apply h-full overflow-auto
+}
+.sidebar-main-content.sidebar-main-content--full > .close-btn {
+    @apply md:block
+}
+
+.close-btn {
+    @apply hidden absolute top-4 right-6
+}
+
+.sidebar-nav {
+    @apply hidden md:block h-2/3 grow overflow-auto bg-greylight
+}
+.sidebar-nav.sidebar-nav--hidden {
+    @apply opacity-0 invisible h-0
+}
+
+.sidebar-nav-container {
+    @apply h-full px-6 py-4
+}
+
+.sidebar-nav .btn {
+    @apply w-full flex justify-start items-center gap-3.5 p-5 text-black text-left border-b border-iron transition-all duration-200
+    hover:bg-white hover:shadow hover:rounded hover:border-transparent
+}
+
+.sidebar-nav .btn.btn--active {
+    @apply bg-firebrick text-white rounded
+}
+
+.sidebar-nav .btn.btn--active > svg {
+    fill: white;
+}
+
 #list::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
@@ -23,31 +73,11 @@
     width: 28px;
     height: 28px;
     cursor: pointer;
-    z-index: 10
+    z-index: 9999
 }
 
 .marker.marker--active {
     background-image: url('./map/active-marker.svg');
     width: 76px;
     height: 96px;
-}
-
-.sidebar-nav {
-    @apply hidden md:block h-2/3 shrink-0 overflow-auto px-6 py-4 bg-greylight
-}
-.sidebar-nav--hidden {
-    @apply hidden
-}
-
-.sidebar-nav > .btn {
-    @apply w-full flex justify-start items-center gap-3.5 p-5 text-black text-left border-b border-iron transition-all duration-200
-    hover:bg-white hover:shadow hover:rounded hover:border-transparent
-}
-
-.sidebar-nav > .btn.btn--active {
-    @apply bg-firebrick text-white rounded
-}
-
-.sidebar-nav > .btn.btn--active > svg {
-    fill: white;
 }
