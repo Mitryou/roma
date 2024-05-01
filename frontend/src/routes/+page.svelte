@@ -82,10 +82,10 @@
     <section class="main-screen">
         <div class="container mx-auto h-full">
             <div class="flex flex-col justify-center items-start gap-10 lg:gap40 h-full py-10">
-                <h1 class="flex-1 flex flex-col justify-end gap-1 padding">
-                    <span class="text-fill-transparent bg-clip-text bg-gradient-to-b from-70% from-peat to-transparent">ГЕНОЦИД РОМА ВО ВРЕМЯ</span>
-                    <span class="text-fill-transparent bg-clip-text bg-gradient-to-b from-70% from-peat to-transparent">ВТОРОЙ МИРОВОЙ ВОЙНЫ</span>
-                    <span class="text-fill-transparent bg-clip-text bg-gradient-to-b from-70% from-peat to-transparent">В БЕЛАРУСИ</span>
+                <h1 class="main-screen__title">
+                    <span>ГЕНОЦИД РОМА ВО ВРЕМЯ</span>
+                    <span>ВТОРОЙ МИРОВОЙ ВОЙНЫ</span>
+                    <span>В БЕЛАРУСИ</span>
                 </h1>
                 <div class="flex-1 flex items-end w-full md:w-3/4 lg:w-1/2 lg:ml-auto ">
                     <div class="border-l-2 border-white pl-2">
@@ -158,14 +158,6 @@
             </div>
             <div class="flex justify-center">
                 <img src="./images/Belarus.svg" alt="Belarus">
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <div class="container mx-auto">
-            <div class="flex flex-col">
-
             </div>
         </div>
     </section>
