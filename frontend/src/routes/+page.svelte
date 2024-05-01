@@ -1,69 +1,13 @@
-<script>
+<script lang="ts">
     import emblaCarouselSvelte from 'embla-carousel-svelte'
     import Autoplay from 'embla-carousel-autoplay'
+    import PostCardList from '$lib/components/PostCardList.svelte';
+    import PersonCard from '$lib/components/PersonCard.svelte';
 
     let options = {loop: false}
     let plugins = [Autoplay()]
 
-    const persons = [
-        {
-            name: 'Нина Янковская',
-            text: '“Мы выжили благодаря партизанам. От них была защита, приют и еда”',
-            img: './images/persons/nina-yankovskaya.png'
-        },
-        {
-            name: 'Виктор Мурачковский',
-            text: '“Спел песню, и остался живым”',
-            img: './images/persons/viktor-murachkovskij.png'
-        },
-        {
-            name: 'Николай Лукьяненко',
-            text: '“Фашисты хотели стереть с лица земли нашу гордую и свободолюбивую нацию...”',
-            img: './images/persons/nikolaj-lukyanenko.png'
-        },
-        {
-            name: 'Любовь Мурадинская',
-            text: '“Я родилась в лагере Освенцим”',
-            img: './images/persons/lyubov-muradinskaya.png'
-        },
-        {
-            name: 'Галина Александрович',
-            text: '“Стреляли в грудь, в плечи, и только потом в голову, чтобы видеть страх на лицах людей...”',
-            img: './images/persons/galina-alexandrovich.png'
-        },
-        {
-            name: 'Мария Иванова',
-            text: '“Смотрели на цвет кожи: если светлая, значит не ромка...”',
-            img: './images/persons/mariya-ivanova.png'
-        },
-        {
-            name: 'Василий Евдокимов',
-            text: '“Он плакал и просил: запишите меня в поминальную...”',
-            img: './images/persons/vasiliy-evdokimov.png'
-        }
-    ];
-    const news = [
-        {
-            title: 'Выставочная экспозиция "Кто ты, народ рома?" откроется в Борисове 10 августа',
-            date: '03 АВГУСТА 2021, 10:51',
-            img: './images/news.png'
-        },
-        {
-            title: 'Выставочная экспозиция "Кто ты, народ рома?" откроется в Борисове 10 августа',
-            date: '03 АВГУСТА 2021, 10:51',
-            img: './images/news.png'
-        },
-        {
-            title: 'Выставочная экспозиция "Кто ты, народ рома?" откроется в Борисове 10 августа',
-            date: '03 АВГУСТА 2021, 10:51',
-            img: './images/news.png'
-        },
-        {
-            title: 'Выставочная экспозиция "Кто ты, народ рома?" откроется в Борисове 10 августа',
-            date: '03 АВГУСТА 2021, 10:51',
-            img: './images/news.png'
-        }
-    ];
+    export let data: any;
 </script>
 
 <div class="w-full h-full fixed left-0 top-0 z-10 pointer-events-none">
@@ -106,7 +50,7 @@
         <div class="container mx-auto">
             <div class="flex flex-col-reverse md:flex-row justify-between gap-y-6">
                 <div class="padding">
-                    <h2 class="mb-6">Забытый геноцид</h2>
+                    <h2 class="h2 mb-6">Забытый геноцид</h2>
                     <p class="text-xl font-light mb-10">
                         При помощи новых архивных материалов и воспоминаний очевидцев Белорусская ромская диаспора заново открыла историю неизвестного геноцида рома
                     </p>
@@ -123,38 +67,29 @@
     <section class="py-20">
         <div class="container mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 mb-6">
-                <h2 class="padding">Интервью со свидетелями</h2>
-                <a href="#" class="link-btn">Смотреть все</a>
+                <h2 class="h2 padding">Интервью со свидетелями</h2>
+                <a href="/persons" class="link-btn">Смотреть все</a>
             </div>
 
-            <div class="embla" use:emblaCarouselSvelte="{{options, plugins}}">
-                <div class="embla__container">
-                    {#each persons as person}
-                        <div class="embla__slide padding">
-                            <article class=" lg:h-[482px] bg-dark-charcoal flex flex-col-reverse md:flex-row justify-between items-stretch gap-4 p-12">
-                                <div class="flex-1 flex flex-col justify-between gap-4">
-                                    <blockquote>
-                                        <p class="text-2xl font-noto-sans font-normal mb-8">{person.text}</p>
-                                        <cite class="text-xl font-noto-sans font-thin not-italic">{person.name}</cite>
-                                    </blockquote>
-                                    <a href="#" class="link">Смотреть интервью</a>
-                                </div>
-                                <div class="w-full sm:w-[290px]">
-                                    <img src={person.img} alt={person.name} class="w-full h-full object-cover">
-                                </div>
-                            </article>
-                        </div>
-                    {/each}
+            {#if data.persons.length > 0}
+                <div class="embla" use:emblaCarouselSvelte="{{options, plugins}}">
+                    <div class="embla__container">
+                        {#each data.persons as person}
+                            <div class="embla__slide padding">
+                                <PersonCard person={person} />
+                            </div>
+                        {/each}
+                    </div>
                 </div>
-            </div>
+            {/if}
         </div>
     </section>
 
     <section class="py-20">
         <div class="container mx-auto">
             <div class="flex flex-col gap-10">
-                <h2 class="padding mb-6">Карта мест уничтожения рома</h2>
-                <a href="#" class="link-btn">Изучать</a>
+                <h2 class="h2 padding mb-6">Карта мест уничтожения рома</h2>
+                <a href="/map" class="link-btn">Изучать</a>
             </div>
             <div class="flex justify-center">
                 <img src="./images/Belarus.svg" alt="Belarus">
@@ -164,29 +99,12 @@
 
     <section class="py-20">
         <div class="container mx-auto h-full relative">
-            <h2 class="padding mb-6">Новости</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-4 mb-10">
-                {#each news as item}
-                    <article class="w-full md:w-[calc(var(--grid-col-width)_-_24px)] h-[511px] mx-auto overflow-hidden rounded-lg">
-                        <div class="h-full flex flex-col items-stretch bg-white">
-                            <div class="w-full h-[203px] rounded-lg">
-                                <img src={item.img} alt={item.title} class="w-full h-full object-cover">
-                            </div>
-                            <div class="flex flex-col justify-between items-stretch text-black h-full">
-                                <div class="p-4 overflow-hidden">
-                                    <span>{item.date}</span>
-                                    <h4>{item.title}</h4>
-                                </div>
-                                <a href="#" class="p-4 flex justify-between items-center border-t border-black shrink-0 after:w-[34px] after:h-[34px] after:bg-[url('./icons/black-arrow-right.svg')] after:bg-no-repeat after:bg-center after:bg-cover after:shrink-0">
-                                    Читать далее
-                                </a>
-                            </div>
-                        </div>
-                    </article>
-                {/each}
-            </div>
+            <h2 class="h2 padding mb-6">Новости</h2>
+            {#if data.posts?.length > 0}
+                <PostCardList posts={data.posts} />
+            {/if}
             <div class="flex justify-end">
-                <a href="#" class="link-btn">Смотреть все</a>
+                <a href="/posts" class="link-btn">Смотреть все</a>
             </div>
         </div>
     </section>

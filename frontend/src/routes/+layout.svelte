@@ -7,7 +7,7 @@
     const navList = [
         {
             name: 'Свидетели геноцида',
-            link: '#'
+            link: '/persons'
         },
         {
             name: 'Карта',
@@ -19,7 +19,7 @@
         },
         {
             name: 'Новости',
-            link: '#'
+            link: '/posts'
         }
     ];
 
@@ -74,7 +74,7 @@
     <div class="container mx-auto">
         <div class="flex flex-col md:flex-row justify-end gap-6 padding">
             <div class="w-72">
-                <h4 class="text-2xl">Правовая информация</h4>
+                <h4 class="h4">Правовая информация</h4>
                 <ul class="mt-1 list-none ">
                     <li class="py-2.5">
                         <a href="#">Выходные данные</a>
