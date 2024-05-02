@@ -25,3 +25,21 @@ export interface Place {
     link: string;
     coordinates: Position | Position[] | Position[][];
 }
+
+export interface Post {
+    id: number;
+    attributes: {
+        title: string;
+        slug: string;
+        publishedAt: string;
+        thumbnail: {
+            data: {
+                attributes: {
+                    name: string;
+                    url: string;
+                }
+            }
+        },
+        content?: string;
+    }
+}

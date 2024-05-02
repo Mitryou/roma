@@ -180,7 +180,7 @@
                             </defs>
                         </svg>
                     </button>
-                    <h3 class="mb-4">{selectedPlace.title}</h3>
+                    <h3 class="h3 mb-4">{selectedPlace.title}</h3>
                     {#if selectedPlace.shortDescription.length && !isFullDescriptionView}
                         <p class="text-base mb-4">{selectedPlace.shortDescription}</p>
                         <button type="button"
