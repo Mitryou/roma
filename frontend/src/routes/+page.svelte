@@ -8,6 +8,9 @@
     let plugins = [Autoplay()]
 
     export let data: any;
+
+    $: posts = data.posts;
+    $: persons = data.persons;
 </script>
 
 <div class="w-full h-full fixed left-0 top-0 z-10 pointer-events-none">
@@ -71,10 +74,10 @@
                 <a href="/persons" class="link-btn">Смотреть все</a>
             </div>
 
-            {#if data.persons.length > 0}
+            {#if persons.length > 0}
                 <div class="embla" use:emblaCarouselSvelte="{{options, plugins}}">
                     <div class="embla__container">
-                        {#each data.persons as person}
+                        {#each persons as person}
                             <div class="embla__slide padding">
                                 <PersonCard person={person} />
                             </div>
@@ -100,8 +103,8 @@
     <section class="py-20">
         <div class="container mx-auto h-full relative">
             <h2 class="h2 padding mb-6">Новости</h2>
-            {#if data.posts?.length > 0}
-                <PostCardList posts={data.posts} />
+            {#if posts.length > 0}
+                <PostCardList posts={posts} />
             {/if}
             <div class="flex justify-end">
                 <a href="/posts" class="link-btn">Смотреть все</a>
