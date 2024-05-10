@@ -376,9 +376,10 @@ export interface ApiPersonPerson extends Schema.CollectionType {
   attributes: {
     title: Attribute.Text & Attribute.Required;
     thumbnail: Attribute.Media & Attribute.Required;
-    metaTitle: Attribute.String;
-    metaDescription: Attribute.Text;
+    metaTitle: Attribute.String & Attribute.Required;
+    metaDescription: Attribute.Text & Attribute.Required;
     content: Attribute.RichText &
+      Attribute.Required &
       Attribute.CustomField<
         'plugin::ckeditor5.CKEditor',
         {

@@ -26,18 +26,18 @@
     },
     "metaTitle": {
       "type": "string",
-      "required": false
+      "required": true
     },
     "metaDescription": {
       "type": "text",
-      "required": false
+      "required": true
     },
     "content": {
       "type": "customField",
       "options": {
         "preset": "toolbarBalloon"
       },
-      "required": false,
+      "required": true,
       "customField": "plugin::ckeditor5.CKEditor"
     },
     "name": {
