@@ -362,6 +362,85 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
+export interface ApiPersonPerson extends Schema.CollectionType {
+  collectionName: 'people';
+  info: {
+    singularName: 'person';
+    pluralName: 'people';
+    displayName: 'Person';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.Text & Attribute.Required;
+    thumbnail: Attribute.Media & Attribute.Required;
+    metaTitle: Attribute.String;
+    metaDescription: Attribute.Text;
+    content: Attribute.RichText &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'toolbarBalloon';
+        }
+      >;
+    name: Attribute.String & Attribute.Required;
+    slug: Attribute.UID<'api::person.person', 'name'> & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::person.person',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::person.person',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPostPost extends Schema.CollectionType {
+  collectionName: 'posts';
+  info: {
+    singularName: 'post';
+    pluralName: 'posts';
+    displayName: 'Post';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String & Attribute.Required;
+    description: Attribute.Text;
+    thumbnail: Attribute.Media & Attribute.Required;
+    slug: Attribute.UID<'api::post.post', 'title'> & Attribute.Required;
+    metaTitle: Attribute.String & Attribute.Required;
+    metaDescription: Attribute.Text & Attribute.Required;
+    content: Attribute.RichText &
+      Attribute.Required &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'toolbar';
+        }
+      >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -788,85 +867,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface ApiPersonPerson extends Schema.CollectionType {
-  collectionName: 'people';
-  info: {
-    singularName: 'person';
-    pluralName: 'people';
-    displayName: 'Person';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    title: Attribute.Text & Attribute.Required;
-    thumbnail: Attribute.Media & Attribute.Required;
-    metaTitle: Attribute.String;
-    metaDescription: Attribute.Text;
-    content: Attribute.RichText &
-      Attribute.CustomField<
-        'plugin::ckeditor5.CKEditor',
-        {
-          preset: 'toolbarBalloon';
-        }
-      >;
-    name: Attribute.String & Attribute.Required;
-    slug: Attribute.UID<'api::person.person', 'name'> & Attribute.Required;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::person.person',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::person.person',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiPostPost extends Schema.CollectionType {
-  collectionName: 'posts';
-  info: {
-    singularName: 'post';
-    pluralName: 'posts';
-    displayName: 'Post';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    title: Attribute.String & Attribute.Required;
-    description: Attribute.Text;
-    thumbnail: Attribute.Media & Attribute.Required;
-    slug: Attribute.UID<'api::post.post', 'title'> & Attribute.Required;
-    metaTitle: Attribute.String & Attribute.Required;
-    metaDescription: Attribute.Text & Attribute.Required;
-    content: Attribute.RichText &
-      Attribute.Required &
-      Attribute.CustomField<
-        'plugin::ckeditor5.CKEditor',
-        {
-          preset: 'toolbar';
-        }
-      >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-  };
-}
-
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -877,6 +877,8 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
+      'api::person.person': ApiPersonPerson;
+      'api::post.post': ApiPostPost;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
@@ -885,8 +887,6 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'api::person.person': ApiPersonPerson;
-      'api::post.post': ApiPostPost;
     }
   }
 }
