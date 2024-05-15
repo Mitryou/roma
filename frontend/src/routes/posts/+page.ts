@@ -4,16 +4,10 @@ import {error} from '@sveltejs/kit';
 
 /** @type {import('./$types').PageLoad} */
 export const load: Load = async ({ fetch }) => {
-    const posts = await fetch(`${API_URL}/posts` +
-        '?fields[0]=title' +
-        '&fields[1]=slug' +
-        '&fields[2]=publishedAt' +
-        '&populate[thumbnail][fields][0]=name&populate[thumbnail][fields][1]=url')
+    const posts = await fetch(`${API_URL}/posts`)
         .then(response => response.json())
         .then(json => {
-            if (json) {
-                return json.data;
-            }
+            if (json) return json.data;
 
             error(500, 'Что-то пошло не так! Попробуйте позже.');
         });

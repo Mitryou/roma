@@ -3,11 +3,13 @@
     import CKEditorContent from '$lib/components/CKEditorContent.svelte';
 
     export let data: any;
+
+    $: person = data.person;
 </script>
 
 <svelte:head>
-    <title>{data.person.attributes.metaTitle}</title>
-    <meta name="description" content={data.person.attributes.metaDescription} />
+    <title>{person.attributes.metaTitle}</title>
+    <meta name="description" content={person.attributes.metaDescription} />
 </svelte:head>
 
 <main class="py-5">
@@ -17,16 +19,16 @@
                 <header class="flex gap-3">
                     <div class="flex-1 flex flex-col justify-between gap-4">
                         <blockquote>
-                            <p class="text-2xl font-noto-sans font-normal mb-8">{data.person.attributes.title}</p>
-                            <cite class="text-xl font-noto-sans font-thin not-italic">{data.person.attributes.name}</cite>
+                            <p class="text-2xl font-noto-sans font-normal mb-8">{person.attributes.title}</p>
+                            <cite class="text-xl font-noto-sans font-thin not-italic">{person.attributes.name}</cite>
                         </blockquote>
                     </div>
                     <div class="w-full sm:w-[290px]">
-                        <img src={`${BACKEND_URL}${data.person.attributes.thumbnail.data.attributes.url}`} alt={data.person.attributes.name} class="w-full h-full object-cover">
+                        <img src={`${BACKEND_URL}${person.attributes.thumbnail.data.attributes.url}`} alt={person.attributes.name} class="w-full h-full object-cover">
                     </div>
                 </header>
-                {#if data.person.attributes.content}
-                    <CKEditorContent content={data.person.attributes.content}/>
+                {#if person.attributes.content}
+                    <CKEditorContent content={person.attributes.content}/>
                 {/if}
             </article>
         </div>
