@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_typography_strong_texts",
+  "info": {
+    "displayName": "Strong Text",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_blocks_image_with_texts",
+  "info": {
+    "displayName": "ImageWithText",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "imageComponent": {
+      "type": "component",
+      "repeatable": false,
+      "component": "media.image"
+    },
+    "imageAlign": {
+      "type": "enumeration",
+      "enum": [
+        "left",
+        "right"
+      ],
+      "default": "left"
+    },
+    "paragraphGroup": {
+      "type": "component",
+      "repeatable": true,
+      "component": "typography.paragraph",
+      "required": true
+    }
+  }
+}

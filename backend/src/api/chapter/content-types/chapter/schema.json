@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "chapters",
+  "info": {
+    "singularName": "chapter",
+    "pluralName": "chapters",
+    "displayName": "Chapter",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "blocks.image-with-text",
+        "blocks.images",
+        "blocks.text",
+        "media.image",
+        "media.slider",
+        "media.video",
+        "typography.blockquote",
+        "typography.heading",
+        "typography.paragraph",
+        "typography.strong-text"
+      ],
+      "required": true
+    }
+  }
+}

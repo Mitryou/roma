@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_blocks_texts",
+  "info": {
+    "displayName": "Text",
+    "icon": "strikeThrough",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "paragraphGroup": {
+      "type": "component",
+      "repeatable": true,
+      "component": "typography.paragraph",
+      "required": true
+    }
+  }
+}

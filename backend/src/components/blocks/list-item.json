@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_blocks_list_items",
+  "info": {
+    "displayName": "ListItem"
+  },
+  "options": {},
+  "attributes": {
+    "author": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "source": {
+      "type": "string",
+      "required": true
+    },
+    "pageNumber": {
+      "type": "string"
+    },
+    "link": {
+      "type": "string"
+    }
+  }
+}
