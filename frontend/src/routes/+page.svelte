@@ -75,10 +75,10 @@
             </div>
 
             {#if persons.length > 0}
-                <div class="embla" use:emblaCarouselSvelte="{{options, plugins}}">
-                    <div class="embla__container">
+                <div use:emblaCarouselSvelte="{{options, plugins}}">
+                    <div class="flex">
                         {#each persons as person}
-                            <div class="embla__slide padding">
+                            <div class="grow-0 shrink-0 w-full md:w-[calc(var(--grid-col-width)_*_1.5)] lg:w-[calc(var(--grid-col-width)_*_2)] padding">
                                 <PersonCard person={person} />
                             </div>
                         {/each}
