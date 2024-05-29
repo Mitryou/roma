@@ -4,6 +4,14 @@ import {API_URL} from '../config';
 
 /** @type {import('./$types').PageLoad} */
 export const load: Load = async ({ fetch }) => {
+    const history = await fetch(`${API_URL}/history?populate=chapters`)
+        .then(response => response.json())
+        .then(json => {
+            if (json) return json.data;
+
+            error(500, 'Что-то пошло не так! Попробуйте позже.');
+        });
+
     const posts = await fetch(`${API_URL}/posts`)
         .then(response => response.json())
         .then(json => {
@@ -20,5 +28,5 @@ export const load: Load = async ({ fetch }) => {
             error(500, 'Что-то пошло не так! Попробуйте позже.');
         });
 
-    return { posts, persons };
+    return { history, posts, persons };
 };

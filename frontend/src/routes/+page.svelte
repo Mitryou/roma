@@ -3,14 +3,28 @@
     import Autoplay from 'embla-carousel-autoplay'
     import PostCardList from '$lib/components/PostCardList.svelte';
     import PersonCard from '$lib/components/PersonCard.svelte';
+    import {onMount} from 'svelte';
 
     let options = {loop: false}
     let plugins = [Autoplay()]
 
     export let data: any;
 
+    $: history = data.history;
     $: posts = data.posts;
     $: persons = data.persons;
+
+    $: historyLink = '';
+
+    onMount(() => {
+        setHistoryLink();
+    });
+
+    function setHistoryLink() {
+        if (history?.attributes.chapters?.data[0]) {
+            historyLink = `/history/${history.attributes.slug}/chapters/${history.attributes.chapters.data[0].attributes.slug}`;
+        }
+    }
 </script>
 
 <div class="w-full h-full fixed left-0 top-0 z-10 pointer-events-none">
@@ -49,23 +63,22 @@
         </div>
     </section>
 
-    <section class="py-20">
-        <div class="container mx-auto">
-            <div class="flex flex-col-reverse md:flex-row justify-between gap-y-6">
-                <div class="padding">
-                    <h2 class="h2 mb-6">Забытый геноцид</h2>
-                    <p class="text-xl font-light mb-10">
-                        При помощи новых архивных материалов и воспоминаний очевидцев Белорусская ромская диаспора заново открыла историю неизвестного геноцида рома
-                    </p>
-                    <a href="#" class="link">Читать материал</a>
-
-                </div>
-                <div class="w-full md:w-[var(--grid-col-width)] lg:w-[calc(var(--grid-col-width)_*_2)] shrink-0 padding">
-                    <img src="./images/history.png" alt="" class="w-full h-full object-cover">
+    {#if history && historyLink}
+        <section class="py-20">
+            <div class="container mx-auto">
+                <div class="flex flex-col-reverse md:flex-row justify-between gap-y-6">
+                    <div class="padding">
+                        <h2 class="h2 mb-6">{history.attributes.title}</h2>
+                        <p class="text-xl font-light mb-10">{history.attributes.description}</p>
+                        <a href={historyLink} class="link">Читать материал</a>
+                    </div>
+                    <div class="w-full md:w-[var(--grid-col-width)] lg:w-[calc(var(--grid-col-width)_*_2)] shrink-0 padding">
+                        <img src="./images/history.png" alt="" class="w-full h-full object-cover">
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    {/if}
 
     <section class="py-20">
         <div class="container mx-auto">
