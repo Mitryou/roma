@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
     import Title from '$lib/components/strapi/Title.svelte';
     import Text from '$lib/components/strapi/Text.svelte';
     import StrongText from '$lib/components/strapi/StrongText.svelte';
@@ -10,47 +9,24 @@
     import Paragraph from '$lib/components/strapi/Paragraph.svelte';
     import Video from '$lib/components/strapi/Video.svelte';
     import Slider from '$lib/components/strapi/Slider.svelte';
-    import type {IDynamicZoneComponent} from '$lib';
 
-    export let content: IDynamicZoneComponent;
+    export let content: any; // TODO set correct type
 
-    $: Component = null;
-
-    onMount(() => {
-        Component = getComponent();
-    });
-
-    function getComponent() {
-        switch (content.__component) {
-            case 'typography.title':
-                return Title;
-            case 'typography.paragraph':
-                return Paragraph;
-            case 'typography.strong-text':
-                return StrongText;
-            case 'typography.blockquote':
-                return Blockquote;
-            case 'media.image':
-                return Image;
-            case 'media.video':
-                return Video;
-            case 'media.slider':
-                return Slider;
-            case 'blocks.text':
-                return Text;
-            case 'blocks.images':
-                return Images;
-            case 'blocks.image-with-text':
-                return ImageWithText;
-            default:
-                return null;
-        }
-    }
+    const components = {
+        'typography.title': Title,
+        'typography.paragraph': Paragraph,
+        'typography.strong-text': StrongText,
+        'typography.blockquote': Blockquote,
+        'media.image': Image,
+        'media.video': Video,
+        'media.slider': Slider,
+        'blocks.text': Text,
+        'blocks.images': Images,
+        'blocks.image-with-text': ImageWithText
+    };
 </script>
 
-{#if Component}
-    <svelte:component this={Component} data={content}/>
-{/if}
+<svelte:component this={components[content.__component]} data={content}/>
 
 
 
