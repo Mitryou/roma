@@ -19,11 +19,6 @@
         setChaptersNav();
     });
 
-    onDestroy(() => {
-        history = null;
-        chapter = null;
-    });
-
     function setChaptersNav() {
         navList = history.attributes.chapters.data.map(chapter => {
             return {

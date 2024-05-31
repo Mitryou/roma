@@ -1,11 +1,12 @@
 {
   "collectionName": "components_blocks_source_lists",
   "info": {
-    "displayName": "Source list"
+    "displayName": "SourceList",
+    "description": ""
   },
   "options": {},
   "attributes": {
-    "item": {
+    "itemGroup": {
       "displayName": "ListItem",
       "type": "component",
       "repeatable": true,

@@ -15,11 +15,11 @@ module.exports = createCoreController('api::chapter.chapter', ({ strapi }) => ({
       populate: {
         content: {
           populate: [
-              'paragraphGroup',
-              'imageComponent',
-              'imageComponent.image',
-              'imageGroup',
-              'imageGroup.image'
+            'paragraphGroup',
+            'imageComponent',
+            'imageComponent.image',
+            'imageGroup',
+            'imageGroup.image'
           ],
         }
       },

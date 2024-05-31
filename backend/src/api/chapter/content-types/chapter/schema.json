@@ -32,7 +32,8 @@
         "typography.blockquote",
         "typography.heading",
         "typography.paragraph",
-        "typography.strong-text"
+        "typography.strong-text",
+        "blocks.related-material"
       ],
       "required": true
     }

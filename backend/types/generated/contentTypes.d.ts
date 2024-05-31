@@ -788,6 +788,48 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiArticleArticle extends Schema.CollectionType {
+  collectionName: 'articles';
+  info: {
+    singularName: 'article';
+    pluralName: 'articles';
+    displayName: 'Article';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String & Attribute.Required;
+    slug: Attribute.UID<'api::article.article', 'title'> & Attribute.Required;
+    backgroundImage: Attribute.Media;
+    content: Attribute.RichText &
+      Attribute.Required &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'toolbar';
+        }
+      >;
+    sourcelist: Attribute.Component<'blocks.source-list'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::article.article',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::article.article',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiChapterChapter extends Schema.CollectionType {
   collectionName: 'chapters';
   info: {
@@ -813,7 +855,8 @@ export interface ApiChapterChapter extends Schema.CollectionType {
         'typography.blockquote',
         'typography.heading',
         'typography.paragraph',
-        'typography.strong-text'
+        'typography.strong-text',
+        'blocks.related-material'
       ]
     > &
       Attribute.Required;
@@ -943,12 +986,55 @@ export interface ApiPostPost extends Schema.CollectionType {
           preset: 'toolbar';
         }
       >;
+    post_tags: Attribute.Relation<
+      'api::post.post',
+      'oneToMany',
+      'api::post-tag.post-tag'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
       Attribute.Private;
     updatedBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPostTagPostTag extends Schema.CollectionType {
+  collectionName: 'post_tags';
+  info: {
+    singularName: 'post-tag';
+    pluralName: 'post-tags';
+    displayName: 'Post tag';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required;
+    description: Attribute.Text & Attribute.Private;
+    post: Attribute.Relation<
+      'api::post-tag.post-tag',
+      'manyToOne',
+      'api::post.post'
+    >;
+    slug: Attribute.UID<'api::post-tag.post-tag', 'name'> & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::post-tag.post-tag',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::post-tag.post-tag',
+      'oneToOne',
+      'admin::user'
+    > &
       Attribute.Private;
   };
 }
@@ -971,10 +1057,12 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::article.article': ApiArticleArticle;
       'api::chapter.chapter': ApiChapterChapter;
       'api::history.history': ApiHistoryHistory;
       'api::person.person': ApiPersonPerson;
       'api::post.post': ApiPostPost;
+      'api::post-tag.post-tag': ApiPostTagPostTag;
     }
   }
 }

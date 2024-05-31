@@ -51,13 +51,32 @@ export interface BlocksListItem extends Schema.Component {
   };
 }
 
+export interface BlocksRelatedMaterial extends Schema.Component {
+  collectionName: 'components_blocks_related_materials';
+  info: {
+    displayName: 'Related Material';
+    description: '';
+  };
+  attributes: {
+    title: Attribute.String & Attribute.Required;
+    description: Attribute.Text;
+    thumbnail: Attribute.Media;
+    article: Attribute.Relation<
+      'blocks.related-material',
+      'oneToOne',
+      'api::article.article'
+    >;
+  };
+}
+
 export interface BlocksSourceList extends Schema.Component {
   collectionName: 'components_blocks_source_lists';
   info: {
-    displayName: 'Source list';
+    displayName: 'SourceList';
+    description: '';
   };
   attributes: {
-    item: Attribute.Component<'blocks.list-item', true>;
+    itemGroup: Attribute.Component<'blocks.list-item', true>;
   };
 }
 
@@ -166,6 +185,7 @@ declare module '@strapi/types' {
       'blocks.image-with-text': BlocksImageWithText;
       'blocks.images': BlocksImages;
       'blocks.list-item': BlocksListItem;
+      'blocks.related-material': BlocksRelatedMaterial;
       'blocks.source-list': BlocksSourceList;
       'blocks.text': BlocksText;
       'media.image': MediaImage;

@@ -1,4 +1,4 @@
-type Blocks = 'blocks.text' | 'blocks.images' | 'blocks.image-with-text';
+type Blocks = 'blocks.text' | 'blocks.images' | 'blocks.image-with-text' | 'blocks.related-material';
 type Media = 'media.image' | 'media.video' | 'media.slider';
 type Typography = 'typography.title' | 'typography.paragraph' | 'typography.strong-text' | 'typography.blockquote';
 
