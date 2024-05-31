@@ -11,7 +11,9 @@
             <nav class="padding">
                 <ul>
                     {#each history.attributes.chapters.data as chapter, index}
-                        <li><a href="/history/{history.attributes.slug}/chapters/{chapter.slug}">{index + 1}. {chapter.attributes.title}</a></li>
+                        <li>
+                            <a href="/history/{history.attributes.slug}/chapters/{chapter.slug}" class="font-semibold hover:text-iron">{index + 1}. {chapter.attributes.title}</a>
+                        </li>
                     {/each}
                 </ul>
             </nav>
