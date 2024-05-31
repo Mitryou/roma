@@ -9,8 +9,8 @@
     export let data: PageData;
 
     $: history = data.history;
-    $: chapters = data.chapters;
     $: chapter = data.chapter;
+
     $: navList = null;
 
     $: isMobileNavOpen = true;
@@ -19,16 +19,19 @@
         setChaptersNav();
     });
 
+    onDestroy(() => {
+        history = null;
+        chapter = null;
+    });
+
     function setChaptersNav() {
-        if (chapters) {
-            navList = chapters.map(chapter => {
-                return {
-                    id: chapter.id,
-                    title: chapter.attributes.title,
-                    link: `/history/${history.attributes.slug}/chapters/${chapter.attributes.slug}`
-                }
-            });
-        }
+        navList = history.attributes.chapters.data.map(chapter => {
+            return {
+                id: chapter.id,
+                title: chapter.attributes.title,
+                link: `/history/${history.attributes.slug}/chapters/${chapter.attributes.slug}`
+            }
+        });
     }
 
     function setShowMobileNav() {
@@ -63,8 +66,8 @@
                     <Fa icon={faXmark}/>
                 </button>
                 <nav class="nav-list-mobile">
-                    {#each navList as item}
-                        <a href={item.link} class:text-white={chapter.id === item.id} class="font-semibold hover:text-iron" on:click={setShowMobileNav}>{item.title}</a>
+                    {#each navList as item, index}
+                        <a href={item.link} class:text-white={chapter.id === item.id} class="font-semibold hover:text-iron" on:click={setShowMobileNav}>{index + 1}. {item.title}</a>
                     {/each}
                 </nav>
             </div>

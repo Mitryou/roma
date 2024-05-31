@@ -29,6 +29,11 @@ export type TVideo = {
     description: string
 }
 
+export type TStrongText = {
+    id: number,
+    text: string
+}
+
 export interface IDynamicZoneComponent {
     id: number,
     __component: ComponentName
