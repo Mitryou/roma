@@ -41,6 +41,7 @@ export interface BlocksListItem extends Schema.Component {
   collectionName: 'components_blocks_list_items';
   info: {
     displayName: 'ListItem';
+    description: '';
   };
   attributes: {
     author: Attribute.String & Attribute.Required;
@@ -48,6 +49,7 @@ export interface BlocksListItem extends Schema.Component {
     source: Attribute.String & Attribute.Required;
     pageNumber: Attribute.String;
     link: Attribute.String;
+    anchorId: Attribute.String;
   };
 }
 

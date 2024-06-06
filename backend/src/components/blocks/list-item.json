@@ -1,7 +1,8 @@
 {
   "collectionName": "components_blocks_list_items",
   "info": {
-    "displayName": "ListItem"
+    "displayName": "ListItem",
+    "description": ""
   },
   "options": {},
   "attributes": {
@@ -22,6 +23,10 @@
     },
     "link": {
       "type": "string"
+    },
+    "anchorId": {
+      "type": "string",
+      "unique": false
     }
   }
 }

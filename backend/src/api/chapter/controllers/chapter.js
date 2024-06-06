@@ -19,7 +19,9 @@ module.exports = createCoreController('api::chapter.chapter', ({ strapi }) => ({
             'imageComponent',
             'imageComponent.image',
             'imageGroup',
-            'imageGroup.image'
+            'imageGroup.image',
+            'thumbnail',
+            'article'
           ],
         }
       },

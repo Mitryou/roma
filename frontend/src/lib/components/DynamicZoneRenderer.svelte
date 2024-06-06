@@ -9,6 +9,7 @@
     import Paragraph from '$lib/components/strapi/Paragraph.svelte';
     import Video from '$lib/components/strapi/Video.svelte';
     import Slider from '$lib/components/strapi/Slider.svelte';
+    import RelatedMaterial from '$lib/components/strapi/RelatedMaterial.svelte';
 
     export let content: any; // TODO set correct type
 
@@ -22,7 +23,8 @@
         'media.slider': Slider,
         'blocks.text': Text,
         'blocks.images': Images,
-        'blocks.image-with-text': ImageWithText
+        'blocks.image-with-text': ImageWithText,
+        'blocks.related-material': RelatedMaterial,
     };
 </script>
 
