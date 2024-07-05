@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "post_tags",
+  "info": {
+    "singularName": "post-tag",
+    "pluralName": "post-tags",
+    "displayName": "Post tag",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "private": true
+    },
+    "post": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::post.post",
+      "inversedBy": "post_tags"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    }
+  }
+}

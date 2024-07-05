@@ -46,7 +46,13 @@
         "output": "HTML",
         "preset": "rich"
       },
-      "customField": "plugin::ckeditor.CKEditor"
+      "customField": "plugin::ckeditor5.CKEditor"
+    },
+    "post_tags": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post-tag.post-tag",
+      "mappedBy": "post"
     }
   }
 }

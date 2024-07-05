@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_blocks_images",
+  "info": {
+    "displayName": "Images",
+    "icon": "picture",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "imageGroup": {
+      "type": "component",
+      "repeatable": true,
+      "component": "media.image",
+      "required": true,
+      "min": 1,
+      "max": 3
+    },
+    "layout": {
+      "type": "enumeration",
+      "enum": [
+        "byThreeCols",
+        "byImagesCount"
+      ],
+      "default": "byThreeCols"
+    }
+  }
+}

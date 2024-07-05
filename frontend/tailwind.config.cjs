@@ -16,6 +16,7 @@ const config = {
 				'peat': '#706856',
 				'iron': '#cccccc',
 				'reddish': '#C73B3B',
+				'grey': '#999999',
 				'greylight': '#F7F6F3',
 				'firebrick': '#B62025'
 			}

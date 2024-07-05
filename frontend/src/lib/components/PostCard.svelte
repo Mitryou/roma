@@ -7,7 +7,7 @@
 
 <article class="w-full md:w-[calc(var(--grid-col-width)_-_24px)] h-[511px] mx-auto overflow-hidden rounded-lg">
     <div class="h-full flex flex-col items-stretch bg-white">
-        <div class="w-full h-[203px] rounded-lg">
+        <div class="w-full h-[203px] rounded-lg bg-iron">
             <img src={`${BACKEND_URL}${post.attributes.thumbnail.data.attributes.url}`}
                  alt={post.attributes.title} class="w-full h-full object-cover">
         </div>

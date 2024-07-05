@@ -1,0 +1,32 @@
+.embla {
+    @apply max-w-md m-auto overflow-hidden;;
+    --slide-height: 19rem;
+    --slide-spacing: 1rem;
+    --slide-size: 100%;
+}
+
+.embla__container {
+    @apply flex ml-[calc(var(--slide-spacing)_*_-1)];
+    backface-visibility: hidden;
+    touch-action: pan-y pinch-zoom;
+}
+.embla__slide {
+    @apply flex-[0_0_var(--slide-size)] min-w-0 pl-[var(--slide-spacing)];
+}
+.embla__controls {
+    @apply grid grid-cols-1 sm:grid-cols-[auto_1fr] justify-between items-start gap-[1.2rem] mt-[1rem];
+}
+.embla__buttons {
+    @apply hidden sm:grid grid-cols-[repeat(2,1fr)] gap-[0.6rem] items-center;
+}
+.embla__button {
+    @apply appearance-none bg-transparent touch-manipulation inline-flex no-underline cursor-pointer shadow-[inset_0_0_0_0.1rem_rgb(196,196,196)] w-[2.6rem] h-[2.6rem] z-[1] items-center justify-center m-0 p-0 rounded-[50%] border-0 disabled:text-[rgb(101,101,101)];
+    -webkit-tap-highlight-color: rgba(230, 230, 230, 0.5);
+    -webkit-appearance: none;
+}
+.embla__button__svg {
+    @apply w-[35%] h-[35%];
+}
+.embla__selected-snap-display {
+    @apply text-[rgb(170,170,170)] font-semibold text-nowrap;
+}

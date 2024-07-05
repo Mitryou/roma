@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_media_sliders",
+  "info": {
+    "displayName": "Slider",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "imageGroup": {
+      "type": "component",
+      "repeatable": true,
+      "component": "media.image",
+      "required": true
+    }
+  }
+}
